@@ -393,33 +393,33 @@
                 </div>
                 @include('partial.alerts')
                 {{-- Tasks overdue --}}
-                @if ($tasks->isNotEmpty())
+                @if (!empty($tasksOverdue))
                     <div class="priority high"><span>overdue</span></div>
-                    @foreach ($tasks as $task)
+                    @foreach ($tasksOverdue as $task)
                         <div class="task high  row" style="margin-right: 0px;margin-left: 0px; display: flex;">
                             <div class="col-8 desc">
                                 <div type="button" class="title"><b>Author:</b>
-                                    {{ isset($task->creator) ? $task->creator->name : '' }}</div>
+                                    {{ isset($task['creator']) ? $task['creator']['name'] : '' }}</div>
                                 <div type="button" class="title"><b>Designate:</b>
-                                    {{ isset($task->designate) ? $task->designate->name : '' }}</div>
+                                    {{ isset($task['designate']) ? $task['designate']['name'] : '' }}</div>
                                 <div class="title">
-                                    <b>Description:</b> {{ $task->description }}
+                                    <b>Description:</b> {{ $task['description'] }}
                                 </div>
                             </div>
                             <div class="col desc">
-                                <div class="date">{{ $task->date }}</div>
-                                <div> 1 day</div>
+                                <div class="date">{{ $task['date'] }}</div>
+                                <div> {{ isset($task['time_since']) ? $task['time_since'] : '' }} </div>
                             </div>
                             <div class="col action">
                                 <div class="action-element-container">
-                                    @if (Auth::user()->id == $task->user_designated_id)
+                                    @if (Auth::user()->id == $task['user_designated_id'])
                                         <span type="button" class="material-icons action-element" data-toggle="modal"
-                                            data-target="#logModal{{$task->id}}" data-whatever="@getbootstrap" data-toggle="tooltip"
+                                            data-target="#logModal{{$task['id']}}" data-whatever="@getbootstrap" data-toggle="tooltip"
                                             data-placement="top" title="Edit">
                                             edit
                                         </span>
                                     @endif
-                                    <form method="POST" action="{{ route('tasks.destroy', $task) }}">
+                                    <form method="POST" action="{{ route('tasks.destroy', $task['id']) }}">
                                         @csrf
                                         @method('DELETE')
                                         <span type="submit" class="destroy-submit material-icons action-element"
@@ -432,7 +432,7 @@
                         </div>
 
                         {{-- MODAL LOG --}}
-                        <div class="modal fade bd-example-modal-lg" id="logModal{{$task->id}}" tabindex="-1" role="dialog"
+                        <div class="modal fade bd-example-modal-lg" id="logModal{{$task['id']}}" tabindex="-1" role="dialog"
                             aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-lg" role="document">
                                 <div class="modal-content">
@@ -445,22 +445,22 @@
                                     <form method="POST" action="{{ route('logs.store') }}">
                                         @csrf
                                         <div class="modal-body">
-                                            @foreach ($task->logs as $log)
+                                            @foreach ($task['logs'] as $log)
                                                 <div
-                                                    class="d-flex pb-2 {{ $log->creator->id == Auth::user()->id ? 'flex-row-reverse' : 'flex-row' }}">
+                                                    class="d-flex pb-2 {{ $log['creator']['id'] == Auth::user()->id ? 'flex-row-reverse' : 'flex-row' }}">
                                                     <div class="card w-50">
                                                         <div class="card-header">
                                                             <div>
                                                                 <span>
                                                                     Author:
-                                                                    {{ isset($log->creator) ? $log->creator->name : '-' }}
+                                                                    {{ isset($log['creator']) ? $log['creator']['name'] : '-' }}
                                                                 </span>
                                                                 <span style="margin-left: 30px">
-                                                                    {{ $log->date }}
+                                                                    {{ $log['date'] }}
                                                                 </span>
                                                             </div>
                                                             <div>
-                                                                Message: {{ isset($log->comment) ? $log->comment : '-' }}
+                                                                Message: {{ isset($log['comment']) ? $log['comment'] : '-' }}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -472,7 +472,7 @@
                                             </div>
 
                                             <div class="form-group" hidden>
-                                                <input class="form-control" name="taskId" value="{{$task->id}}">
+                                                <input class="form-control" name="taskId" value="{{$task['id']}}">
                                             </div>
 
                                         </div>
@@ -489,33 +489,33 @@
                 @endif
 
                 {{-- Tasks upcoming --}}
-                @if ($tasksOverdue->isNotEmpty())
+                @if (!empty($tasks))
                     <div class="priority low"><span>upcoming</span></div>
-                    @foreach ($tasksOverdue as $task)
+                    @foreach ($tasks as $task)
                         <div class="task low  row" style="margin-right: 0px;margin-left: 0px; display: flex;">
                             <div class="col-8 desc">
                                 <div type="button" class="title"><b>Author:</b>
-                                    {{ isset($task->creator) ? $task->creator->name : '' }}</div>
+                                    {{ isset($task['creator']) ? $task['creator']['name'] : '' }}</div>
                                 <div type="button" class="title"><b>Designate:</b>
-                                    {{ isset($task->designate) ? $task->designate->name : '' }}</div>
+                                    {{ isset($task['designate']) ? $task['designate']['name'] : '' }}</div>
                                 <div class="title">
-                                    <b>Description:</b> {{ $task->description }}
+                                    <b>Description:</b> {{ $task['description'] }}
                                 </div>
                             </div>
                             <div class="col desc">
-                                <div class="date">{{ $task->date }}</div>
-                                <div> 1 day</div>
+                                <div class="date">{{ $task['date'] }}</div>
+                                <div> {{ isset($task['time_since']) ? $task['time_since'] : '' }}</div>
                             </div>
                             <div class="col action">
                                 <div class="action-element-container">
-                                    @if (Auth::user()->id == $task->user_designated_id)
+                                    @if (Auth::user()->id == $task['user_designated_id'])
                                         <span type="button" class="material-icons action-element" data-toggle="modal"
-                                            data-target="#logModal{{$task->id}}" data-whatever="@getbootstrap" data-toggle="tooltip"
+                                            data-target="#logModal{{$task['id']}}" data-whatever="@getbootstrap" data-toggle="tooltip"
                                             data-placement="top" title="Edit">
                                             edit
                                         </span>
                                     @endif
-                                    <form method="POST" action="{{ route('tasks.destroy', $task) }}">
+                                    <form method="POST" action="{{ route('tasks.destroy', $task['id']) }}">
                                         @csrf
                                         @method('DELETE')
                                         <span type="submit" class="destroy-submit material-icons action-element"
@@ -528,7 +528,7 @@
                         </div>
 
                         {{-- MODAL LOG --}}
-                        <div class="modal fade bd-example-modal-lg" id="logModal{{$task->id}}" tabindex="-1" role="dialog"
+                        <div class="modal fade bd-example-modal-lg" id="logModal{{$task['id']}}" tabindex="-1" role="dialog"
                             aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-lg" role="document">
                                 <div class="modal-content">
@@ -541,22 +541,22 @@
                                     <form method="POST" action="{{ route('logs.store') }}">
                                         @csrf
                                         <div class="modal-body">
-                                            @foreach ($task->logs as $log)
+                                            @foreach ($task['logs'] as $log)
                                                 <div
-                                                    class="d-flex pb-2 {{ $log->creator->id == Auth::user()->id ? 'flex-row-reverse' : 'flex-row' }}">
+                                                    class="d-flex pb-2 {{ $log['creator']['id'] == Auth::user()->id ? 'flex-row-reverse' : 'flex-row' }}">
                                                     <div class="card w-50">
                                                         <div class="card-header">
                                                             <div>
                                                                 <span>
                                                                     Author:
-                                                                    {{ isset($log->creator) ? $log->creator->name : '-' }}
+                                                                    {{ isset($log['creator']) ? $log['creator']['name'] : '-' }}
                                                                 </span>
                                                                 <span style="margin-left: 30px">
-                                                                    {{ $log->date }}
+                                                                    {{ $log['date'] }}
                                                                 </span>
                                                             </div>
                                                             <div>
-                                                                Message: {{ isset($log->comment) ? $log->comment : '-' }}
+                                                                Message: {{ isset($log['comment']) ? $log['comment'] : '-' }}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -568,7 +568,7 @@
                                             </div>
 
                                             <div class="form-group" hidden>
-                                                <input class="form-control" name="taskId" value="{{$task->id}}">
+                                                <input class="form-control" name="taskId" value="{{$task['id']}}">
                                             </div>
 
                                         </div>
@@ -585,7 +585,7 @@
 
 
                 @endif
-                @if ($tasks->isEmpty() && $tasksOverdue->isEmpty())
+                @if (empty($tasks) && empty($tasksOverdue))
                     <div class="no-tasks">
                         <p class="text-muted">Tasks empty</p>
                     </div>
@@ -611,22 +611,22 @@
                         <div class="form-group">
                             <label for="recipient-name" class="col-form-label">User designed:</label>
                             <select class="form-select form-control" aria-label="Default select example"
-                                name="user_designated_id">
+                                name="user_designated_id" required>
                                 <option selected>Designate user</option>
                                 @if (isset($users))
                                     @foreach ($users as $user)
-                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                        <option value="{{ $user->id }}">{{ $user['name'] }}</option>
                                     @endforeach
                                 @endif
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="message-text" class="col-form-label">Description:</label>
-                            <textarea class="form-control" name="description"></textarea>
+                            <label for="message-text" class="col-form-label">Description *:</label>
+                            <textarea class="form-control" name="description" required></textarea>
                         </div>
                         <div class="form-group">
-                            <label for="message-text" class="col-form-label">Due date:</label>
-                            <input type="date" class="form-control" name="date"></textarea>
+                            <label for="message-text" class="col-form-label">Due date *:</label>
+                            <input type="date" class="form-control" name="date" required></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -658,7 +658,7 @@
                                     <div class="card-header">
                                         <div>
                                             <span>
-                                                Author: {{ isset($log->creator) ? $log->creator->name : '-' }}
+                                                Author: {{ isset($log->creator) ? $log->creator['name'] : '-' }}
                                             </span>
                                             <span style="margin-left: 30px">
                                                 {{$log->date}}

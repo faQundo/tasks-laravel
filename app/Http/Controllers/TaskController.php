@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Log;
 use App\Models\Task;
 use App\Models\User;
+use App\Http\Resources\Task as TaskResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 /* use Illuminate\Support\Facades\Auth; */
@@ -21,12 +22,13 @@ class TaskController extends Controller
         /* dd(Carbon::now()->format('Y-m-d') , Task::first()->date); */
         $data['users'] = User::all();
         $data['logs'] = Log::all();
-        $data['tasksOverdue'] = Task::where([
+        $data['tasksOverdue'] = TaskResource::collection(Task::where([
+                                    ['date', '<', Carbon::now()->format('Y-m-d')]
+                                ])->get())->resolve();
+        $data['tasks'] = TaskResource::collection(Task::where([
                                     ['date','>=', Carbon::now()->format('Y-m-d')]
-                                ])->paginate(25);
-        $data['tasks'] = Task::where([
-                            ['date', '<', Carbon::now()->format('Y-m-d')]
-                        ])->paginate(25);
+                                ])->get())->resolve();
+
         return view('dashboard' , $data);
     }
 
@@ -53,6 +55,7 @@ class TaskController extends Controller
             'date' => 'required',
             'user_designated_id' => 'required',
         ]);
+
         try {
             $task = new Task();
             $task->description = $request->description;
