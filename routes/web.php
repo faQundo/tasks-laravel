@@ -27,12 +27,12 @@ Route::group([
     'middleware' => 'auth',
     'prefix' => 'pages',
 ], function () {
-
+    Route::resources([
+        'tasks' => \App\Http\Controllers\TaskController::class,
+        'logs' => \App\Http\Controllers\LogController::class,
+    ]);
 });
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/mail', [App\Http\Controllers\HomeController::class, 'test'])->name('test');
 
-Route::resources([
-    'tasks' => \App\Http\Controllers\TaskController::class,
-    'logs' => \App\Http\Controllers\LogController::class,
-]);
+
